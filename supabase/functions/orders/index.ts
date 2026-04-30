@@ -54,8 +54,18 @@ Deno.serve(async (req) => {
     // ── POST /orders  (create via RPC for atomicity)
     if (method === 'POST') {
       const body = await req.json()
-      const { data, error } = await client.rpc('create_order_with_items', {
-        p_customer_id: body.customer_id,
+
+      // Auto-lookup customer_id from users table if not provided
+      let customerId = body.customer_id
+      if (!customerId) {
+        const { data: userRow } = await admin.from('users').select('customer_id').eq('id', user.id).single()
+        customerId = userRow?.customer_id
+      }
+      if (!customerId) return err('No customer profile found for this account. Please contact support.', 400)
+
+      // Use adminClient so RLS does not block the security-definer RPC
+      const { data, error } = await admin.rpc('create_order_with_items', {
+        p_customer_id: customerId,
         p_title: body.title,
         p_description: body.description ?? null,
         p_priority: body.priority ?? 'normal',
