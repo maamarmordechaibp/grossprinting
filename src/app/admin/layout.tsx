@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AppShell } from '@/components/app-shell'
 import {
   LayoutDashboard, Briefcase, Kanban, Users,
-  Package, FileText, Quote, Receipt,
+  Package, FileText, Quote, Receipt, DollarSign,
 } from 'lucide-react'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -30,6 +30,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/admin/customers', label: 'Customers', icon: <Users className="h-4 w-4" /> },
     { href: '/admin/invoices', label: 'Invoices', icon: <Receipt className="h-4 w-4" /> },
     { href: '/admin/inventory', label: 'Inventory', icon: <Package className="h-4 w-4" /> },
+    { href: '/admin/pricing', label: 'Pricing', icon: <DollarSign className="h-4 w-4" /> },
   ]
 
   return (
