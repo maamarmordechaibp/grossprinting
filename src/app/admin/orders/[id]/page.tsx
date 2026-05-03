@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
@@ -49,8 +49,6 @@ export default function AdminOrderDetailPage() {
   const [newStatus, setNewStatus] = useState('')
   const [note, setNote] = useState('')
   const [stage, setStage] = useState('')
-
-  // Quote form (manual override after calculator)
   const [qSubtotal, setQSubtotal] = useState('')
   const [qTax, setQTax] = useState('0')
   const [qValidDays, setQValidDays] = useState('14')
@@ -180,11 +178,11 @@ export default function AdminOrderDetailPage() {
                   ) : (
                     <div className="divide-y">
                       {items.map((item, i) => (
-                        <div key={item.id as string ?? i} className="py-3 flex items-center justify-between">
+                        <div key={(item.id as string) ?? i} className="py-3 flex items-center justify-between">
                           <div>
                             <p className="font-medium text-sm">{item.name as string}</p>
                             <p className="text-xs text-muted-foreground mt-0.5">
-                              {item.size as string} · {item.color_type as string}
+                              {item.size as string} &middot; {item.color_type as string}
                               {item.paper_type ? ` · ${item.paper_type as string}` : ''}
                             </p>
                           </div>
@@ -196,7 +194,7 @@ export default function AdminOrderDetailPage() {
                       ))}
                       <div className="pt-3 flex justify-between font-semibold">
                         <span>Total</span>
-                        <span>\</span>
+                        <span>${(items.reduce((s, it) => s + Number(it.line_total ?? 0), 0)).toFixed(2)}</span>
                       </div>
                     </div>
                   )}
@@ -219,7 +217,7 @@ export default function AdminOrderDetailPage() {
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{f.name as string}</p>
                             <p className="text-xs text-muted-foreground">
-                              {f.label ? ${String(f.label)} ·  : ''}{((f.size_bytes as number) / 1024).toFixed(0)} KB
+                              {f.label ? `${String(f.label)} · ` : ''}{((f.size_bytes as number) / 1024).toFixed(0)} KB
                             </p>
                           </div>
                           {Boolean(f.is_final) && <Badge variant="outline" className="text-xs text-emerald-700 border-emerald-300">Final</Badge>}
@@ -247,16 +245,16 @@ export default function AdminOrderDetailPage() {
                     <div className="relative pl-5">
                       <div className="absolute left-1.5 top-0 bottom-0 w-px bg-border" />
                       <div className="space-y-4">
-                        {[...history].reverse().map((item, i) => (
+                        {[...history].reverse().map((item) => (
                           <div key={item.id as string} className="relative">
-                            <div className={bsolute -left-4 top-1.5 h-2.5 w-2.5 rounded-full ring-2 ring-background \} />
+                            <div className={`absolute -left-4 top-1.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${STATUS_COLOR[item.to_status as string] ?? 'bg-gray-400'}`} />
                             <div className="flex items-start justify-between gap-2">
                               <div>
                                 <p className="text-sm">
                                   {Boolean(item.from_status) && (
-                                    <><Badge variant="outline" className="text-xs mr-1">{item.from_status as string}</Badge> → </>
+                                    <><Badge variant="outline" className="text-xs mr-1">{item.from_status as string}</Badge> &rarr; </>
                                   )}
-                                  <Badge className={\ text-xs}>{item.to_status as string}</Badge>
+                                  <Badge className={`${STATUS_COLOR[item.to_status as string] ?? ''} text-xs`}>{item.to_status as string}</Badge>
                                 </p>
                                 {Boolean(item.note) && <p className="text-xs text-muted-foreground mt-1">{String(item.note)}</p>}
                               </div>
@@ -298,10 +296,10 @@ export default function AdminOrderDetailPage() {
                         </span>
                       </div>
                       <div className="space-y-1 text-sm">
-                        <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>\</span></div>
-                        <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>\</span></div>
+                        <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>${Number(q.subtotal).toFixed(2)}</span></div>
+                        <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>${Number(q.tax).toFixed(2)}</span></div>
                         <Separator className="my-1.5" />
-                        <div className="flex justify-between font-semibold text-base"><span>Total</span><span>\</span></div>
+                        <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${Number(q.total).toFixed(2)}</span></div>
                       </div>
                       {q.valid_until && (
                         <p className="text-xs text-muted-foreground mt-2">Valid until {new Date(q.valid_until as string).toLocaleDateString()}</p>
@@ -326,7 +324,7 @@ export default function AdminOrderDetailPage() {
                     <TabsContent value="calculator">
                       <QuoteCalculator
                         orderTotalAmount={Number(order.total_amount ?? 0)}
-                        onApply={(subtotal, tax, total, notes) => {
+                        onApply={(subtotal, tax, _total, notes) => {
                           setQSubtotal(subtotal.toFixed(2))
                           setQTax(tax.toFixed(2))
                           setQNotes(notes)
@@ -339,11 +337,11 @@ export default function AdminOrderDetailPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1.5">
-                            <Label className="text-xs">Subtotal (\$) *</Label>
+                            <Label className="text-xs">Subtotal ($) *</Label>
                             <Input type="number" min="0" step="0.01" placeholder="0.00" value={qSubtotal} onChange={e => setQSubtotal(e.target.value)} />
                           </div>
                           <div className="space-y-1.5">
-                            <Label className="text-xs">Tax (\$)</Label>
+                            <Label className="text-xs">Tax ($)</Label>
                             <Input type="number" min="0" step="0.01" placeholder="0.00" value={qTax} onChange={e => setQTax(e.target.value)} />
                           </div>
                         </div>
@@ -355,7 +353,7 @@ export default function AdminOrderDetailPage() {
                           <div className="space-y-1.5">
                             <Label className="text-xs">Total</Label>
                             <div className="h-9 px-3 rounded-md border bg-muted flex items-center text-sm font-semibold">
-                              \
+                              ${qTotal.toFixed(2)}
                             </div>
                           </div>
                         </div>
