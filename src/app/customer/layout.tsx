@@ -21,12 +21,12 @@ export default async function CustomerLayout({ children }: { children: React.Rea
 
   const navItems = [
     { href: '/customer/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
-    { href: '/customer/jobs', label: 'My Jobs', icon: <Briefcase className="h-4 w-4" /> },
-    { href: '/customer/invoices', label: 'Invoices', icon: <FileText className="h-4 w-4" /> },
+    { href: '/customer/jobs',      label: 'My Jobs',   icon: <Briefcase className="h-4 w-4" /> },
+    { href: '/customer/invoices',  label: 'Invoices',  icon: <FileText className="h-4 w-4" /> },
   ]
 
   return (
-    <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined}>
+    <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined} userRole="customer">
       {children}
     </AppShell>
   )

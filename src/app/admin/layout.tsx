@@ -23,18 +23,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const navItems = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
-    { href: '/admin/orders', label: 'Orders', icon: <Briefcase className="h-4 w-4" /> },
-    { href: '/admin/kanban', label: 'Kanban', icon: <Kanban className="h-4 w-4" /> },
-    { href: '/admin/quotes', label: 'Quotes', icon: <Quote className="h-4 w-4" /> },
-    { href: '/admin/customers', label: 'Customers', icon: <Users className="h-4 w-4" /> },
-    { href: '/admin/invoices', label: 'Invoices', icon: <Receipt className="h-4 w-4" /> },
-    { href: '/admin/inventory', label: 'Inventory', icon: <Package className="h-4 w-4" /> },
-    { href: '/admin/pricing', label: 'Pricing', icon: <DollarSign className="h-4 w-4" /> },
+    { href: '/admin/dashboard', label: 'Dashboard',  icon: <LayoutDashboard className="h-4 w-4" />, section: 'Operations' },
+    { href: '/admin/orders',    label: 'Orders',     icon: <Briefcase className="h-4 w-4" /> },
+    { href: '/admin/kanban',    label: 'Kanban',     icon: <Kanban className="h-4 w-4" /> },
+    { href: '/admin/quotes',    label: 'Quotes',     icon: <Quote className="h-4 w-4" />,     section: 'Management' },
+    { href: '/admin/customers', label: 'Customers',  icon: <Users className="h-4 w-4" /> },
+    { href: '/admin/invoices',  label: 'Invoices',   icon: <Receipt className="h-4 w-4" /> },
+    { href: '/admin/inventory', label: 'Inventory',  icon: <Package className="h-4 w-4" />,  section: 'Setup' },
+    { href: '/admin/pricing',   label: 'Pricing',    icon: <DollarSign className="h-4 w-4" /> },
   ]
 
   return (
-    <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined}>
+    <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined} userRole={profile?.role}>
       {children}
     </AppShell>
   )
