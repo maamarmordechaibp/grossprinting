@@ -418,8 +418,8 @@ export default function AdminOrderDetailPage() {
               <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Customer</CardTitle></CardHeader>
               <CardContent className="text-sm space-y-1.5">
                 <p className="font-medium">{(cust.company_name ?? cust.contact_name ?? cust.full_name) as string}</p>
-                {cust.email && <p className="text-muted-foreground">{cust.email as string}</p>}
-                {cust.phone && <p className="text-muted-foreground">{cust.phone as string}</p>}
+                {Boolean(cust.email) && <p className="text-muted-foreground">{cust.email as string}</p>}
+                {Boolean(cust.phone) && <p className="text-muted-foreground">{cust.phone as string}</p>}
               </CardContent>
             </Card>
           )}

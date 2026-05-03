@@ -51,7 +51,8 @@ const BLANK_STOCK: StockForm = {
 }
 
 function PaperStocksTab() {
-  const supabase = createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any
   const [stocks, setStocks]     = useState<PaperStock[]>([])
   const [tiers, setTiers]       = useState<PricingTier[]>([])
   const [loading, setLoading]   = useState(true)
@@ -295,7 +296,8 @@ const BLANK_PRESET: PresetForm = {
 }
 
 function ProductPresetsTab() {
-  const supabase = createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any
   const [presets, setPresets]   = useState<ProductPreset[]>([])
   const [stocks, setStocks]     = useState<PaperStock[]>([])
   const [loading, setLoading]   = useState(true)
@@ -446,7 +448,8 @@ const BLANK_FINISH: FinishForm = {
 }
 
 function FinishingOptionsTab() {
-  const supabase = createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any
   const [options, setOptions]   = useState<FinishingOption[]>([])
   const [loading, setLoading]   = useState(true)
   const [adding, setAdding]     = useState(false)

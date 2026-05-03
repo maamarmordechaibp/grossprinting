@@ -124,15 +124,15 @@ async function executeTool(name: string, args: Record<string, unknown>, db: Supa
       .from('orders')
       .select('id, title, status, production_stage, priority, deadline, total_amount')
       .not('status', 'in', '(delivered,cancelled,rejected)')
-    const all = orders ?? []
-    const inProd = all.filter(o => !['quote', 'completed'].includes(o.status as string))
+    const all = (orders ?? []) as Array<{ id: string; title: string; status: string; production_stage: string | null; priority: string; deadline: string | null; total_amount: number }>
+    const inProd = all.filter(o => !['quote', 'completed'].includes(o.status))
     const stageCounts: Record<string, number> = {}
     for (const o of inProd) {
-      const s = (o.production_stage as string) ?? 'pending'
+      const s = o.production_stage ?? 'pending'
       stageCounts[s] = (stageCounts[s] ?? 0) + 1
     }
     const sorted = Object.entries(stageCounts).sort((a, b) => b[1] - a[1])
-    const overdue = all.filter(o => o.deadline && new Date(o.deadline as string) < now && o.status !== 'completed')
+    const overdue = all.filter(o => o.deadline && new Date(o.deadline) < now && o.status !== 'completed')
     const urgent  = all.filter(o => o.priority === 'urgent' && o.status !== 'completed')
     return JSON.stringify({
       active_orders:      all.length,
@@ -226,6 +226,9 @@ export async function POST(req: NextRequest) {
 
     const results = await Promise.all(
       msg.tool_calls.map(async (tc) => {
+        if (tc.type !== 'function') {
+          return { role: 'tool' as const, tool_call_id: tc.id, content: '{}' }
+        }
         let args: Record<string, unknown> = {}
         try { args = JSON.parse(tc.function.arguments) } catch { /* ignore */ }
         const result = await executeTool(tc.function.name, args, supabase)

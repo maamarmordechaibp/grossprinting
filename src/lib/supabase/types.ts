@@ -342,6 +342,127 @@ export interface Database {
           stripe_payment_intent_id?: string | null
         }
       }
+      paper_stocks: {
+        Row: {
+          id: string
+          name: string
+          width_in: number
+          height_in: number
+          bw_price: number
+          color_price: number
+          duplex_surcharge: number
+          stock_qty: number
+          low_stock_threshold: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          width_in: number
+          height_in: number
+          bw_price?: number
+          color_price?: number
+          duplex_surcharge?: number
+          stock_qty?: number
+          low_stock_threshold?: number
+          is_active?: boolean
+        }
+        Update: {
+          name?: string
+          width_in?: number
+          height_in?: number
+          bw_price?: number
+          color_price?: number
+          duplex_surcharge?: number
+          stock_qty?: number
+          low_stock_threshold?: number
+          is_active?: boolean
+        }
+      }
+      pricing_tiers: {
+        Row: {
+          id: string
+          paper_stock_id: string
+          min_qty: number
+          max_qty: number | null
+          discount_percent: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          paper_stock_id: string
+          min_qty: number
+          max_qty?: number | null
+          discount_percent: number
+        }
+        Update: {
+          min_qty?: number
+          max_qty?: number | null
+          discount_percent?: number
+        }
+      }
+      product_presets: {
+        Row: {
+          id: string
+          name: string
+          finished_width_in: number
+          finished_height_in: number
+          description: string | null
+          default_paper_stock_id: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          finished_width_in: number
+          finished_height_in: number
+          description?: string | null
+          default_paper_stock_id?: string | null
+          is_active?: boolean
+        }
+        Update: {
+          name?: string
+          finished_width_in?: number
+          finished_height_in?: number
+          description?: string | null
+          default_paper_stock_id?: string | null
+          is_active?: boolean
+        }
+      }
+      finishing_options: {
+        Row: {
+          id: string
+          name: string
+          price_per_sheet: number
+          price_per_piece: number
+          flat_price: number
+          description: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          price_per_sheet?: number
+          price_per_piece?: number
+          flat_price?: number
+          description?: string | null
+          is_active?: boolean
+        }
+        Update: {
+          name?: string
+          price_per_sheet?: number
+          price_per_piece?: number
+          flat_price?: number
+          description?: string | null
+          is_active?: boolean
+        }
+      }
     }
     Views: Record<string, never>
     Functions: {
