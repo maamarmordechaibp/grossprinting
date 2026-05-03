@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell } from '@/components/app-shell'
+import { AiAssistant } from '@/components/ai-assistant'
 import {
   LayoutDashboard, Briefcase, Kanban, Users,
   Package, FileText, Quote, Receipt, DollarSign,
@@ -34,8 +35,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   ]
 
   return (
-    <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined} userRole={profile?.role}>
-      {children}
-    </AppShell>
+    <>
+      <AppShell navItems={navItems} userEmail={user.email ?? ''} userName={profile?.full_name ?? undefined} userRole={profile?.role}>
+        {children}
+      </AppShell>
+      <AiAssistant />
+    </>
   )
 }

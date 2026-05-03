@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateOrderSchema, type CreateOrderInput } from '@/lib/schemas'
 import { api, setToken } from '@/lib/api'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import {
   Plus, Trash2, Upload, X, FileText, Image as ImageIcon,
   Printer, Layers, CloudUpload, CheckCircle2,
-  AlignLeft, Calendar, Zap, StickyNote, Package,
+  AlignLeft, Calendar, Zap, StickyNote, Package, RotateCcw,
 } from 'lucide-react'
 
 /* ── types ── */
@@ -112,15 +112,19 @@ function PaperPicker({ value, onChange }: { value: string; onChange: (v: string)
 
 /* ─────────────────── Main component ─────────────────── */
 export default function NewJobPage() {
-  const router = useRouter()
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+  const fromId       = searchParams.get('from')
+
   const [step, setStep]               = useState(0)
   const [customerId, setCustomerId]   = useState<string | null>(null)
   const [uploadedFiles, setUploadedFiles] = useState<FileEntry[]>([])
   const [uploading, setUploading]     = useState(false)
   const [orderId]                     = useState(() => crypto.randomUUID())
   const [itemPapers, setItemPapers]   = useState<Record<number, string>>({})
+  const [reorderFrom, setReorderFrom] = useState<string | null>(null)
 
-  const { register, control, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } =
+  const { register, control, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } =
     useForm<CreateOrderInput>({
       resolver: zodResolver(CreateOrderSchema) as unknown as Resolver<CreateOrderInput>,
       defaultValues: {
@@ -130,8 +134,9 @@ export default function NewJobPage() {
       },
     })
 
-  const { fields, append, remove } = useFieldArray({ control, name: 'items' })
+  const { fields, append, remove, replace } = useFieldArray({ control, name: 'items' })
 
+  // Load session + customer_id
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -149,6 +154,42 @@ export default function NewJobPage() {
         })
     })
   }, [setValue])
+
+  // Pre-populate from original order when ?from= is present
+  useEffect(() => {
+    if (!fromId) return
+    const supabase = createClient()
+    supabase
+      .from('orders')
+      .select('title, description, priority, notes, order_items(name, quantity, size, color_type, paper_type, unit_price)')
+      .eq('id', fromId)
+      .single()
+      .then(({ data }) => {
+        if (!data) return
+        const d = data as {
+          title: string; description: string | null; priority: string; notes: string | null
+          order_items: Array<{ name: string; quantity: number; size: string; color_type: string; paper_type: string | null; unit_price: number }>
+        }
+        setReorderFrom(d.title)
+        setValue('title', `${d.title} (Reorder)`)
+        setValue('description', d.description ?? '')
+        setValue('priority', d.priority as CreateOrderInput['priority'])
+        setValue('notes', d.notes ?? '')
+        if (d.order_items?.length) {
+          replace(d.order_items.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            size: (item.size as CreateOrderInput['items'][0]['size']) ?? 'Letter',
+            color_type: (item.color_type as 'color' | 'bw') ?? 'color',
+            unit_price: item.unit_price ?? 0,
+            paper_type: item.paper_type ?? undefined,
+          })))
+          const papers: Record<number, string> = {}
+          d.order_items.forEach((item, i) => { if (item.paper_type) papers[i] = item.paper_type })
+          setItemPapers(papers)
+        }
+      })
+  }, [fromId, setValue, replace])
 
   async function uploadFile(file: File) {
     setUploading(true)
@@ -206,9 +247,18 @@ export default function NewJobPage() {
           <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
             <Printer className="h-5 w-5 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">New Print Job</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {reorderFrom ? 'Reorder Job' : 'New Print Job'}
+          </h1>
         </div>
         <p className="text-muted-foreground text-sm ml-12">Tell us what you need printed and we will take care of the rest.</p>
+        {reorderFrom && (
+          <div className="mt-3 ml-12 flex items-center gap-2 text-sm bg-primary/8 border border-primary/20 rounded-lg px-3 py-2 w-fit">
+            <RotateCcw className="h-3.5 w-3.5 text-primary shrink-0" />
+            <span className="text-primary font-medium">Pre-filled from:</span>
+            <span className="text-foreground truncate max-w-[240px]">{reorderFrom}</span>
+          </div>
+        )}
       </div>
 
       {/* ── Step bar ── */}

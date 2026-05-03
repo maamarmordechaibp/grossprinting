@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Plus, Briefcase, ChevronRight, Calendar, AlertTriangle } from 'lucide-react'
+import { Plus, Briefcase, ChevronRight, Calendar, AlertTriangle, RotateCcw } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 const STATUS_COLOR: Record<string, string> = {
@@ -141,25 +141,31 @@ export default async function CustomerJobsPage() {
               <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Past Jobs</h2>
               <div className="space-y-2">
                 {done.map((order) => (
-                  <Link key={order.id} href={`/customer/jobs/${order.id}`}>
-                    <div className="group flex items-stretch border rounded-xl overflow-hidden bg-muted/30 hover:bg-card hover:shadow-sm transition-all">
-                      <div className={`w-1.5 shrink-0 ${STATUS_STRIPE[order.status] ?? 'bg-gray-200'}`} />
-                      <div className="flex-1 px-4 py-3 flex items-center justify-between gap-3 min-w-0">
-                        <div className="flex-1 min-w-0">
-                          <span className="font-medium text-sm text-muted-foreground truncate block">{order.title}</span>
-                          <span className="text-xs text-muted-foreground/70">
-                            {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Badge variant="outline" className={`text-xs ${STATUS_COLOR[order.status] ?? ''}`}>
-                            {STATUS_LABEL[order.status] ?? order.status}
-                          </Badge>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </div>
+                  <div key={order.id} className="group flex items-stretch border rounded-xl overflow-hidden bg-muted/30 hover:bg-card hover:shadow-sm transition-all">
+                    <div className={`w-1.5 shrink-0 ${STATUS_STRIPE[order.status] ?? 'bg-gray-200'}`} />
+                    <Link href={`/customer/jobs/${order.id}`} className="flex-1 px-4 py-3 flex items-center justify-between gap-3 min-w-0">
+                      <div className="flex-1 min-w-0">
+                        <span className="font-medium text-sm text-muted-foreground truncate block">{order.title}</span>
+                        <span className="text-xs text-muted-foreground/70">
+                          {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
+                        </span>
                       </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant="outline" className={`text-xs ${STATUS_COLOR[order.status] ?? ''}`}>
+                          {STATUS_LABEL[order.status] ?? order.status}
+                        </Badge>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </Link>
+                    <div className="border-l flex items-center px-3">
+                      <Link
+                        href={`/customer/jobs/new?from=${order.id}`}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors whitespace-nowrap py-1 px-2 rounded-lg hover:bg-primary/8"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" /> Reorder
+                      </Link>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </section>

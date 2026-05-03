@@ -10,8 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
-import { FileText, Image as ImageIcon, Download, CheckCircle, XCircle, Loader2 } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { FileText, Image as ImageIcon, Download, CheckCircle, XCircle, Loader2, RotateCcw } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const STATUS_COLOR: Record<string, string> = {
   quote: 'bg-yellow-100 text-yellow-800',
@@ -32,6 +33,7 @@ type FileRow = Record<string, unknown>
 export default function JobDetailPage() {
   const params = useParams()
   const id = params.id as string
+  const router = useRouter()
 
   const [order, setOrder] = useState<Order | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
@@ -123,7 +125,16 @@ export default function JobDetailPage() {
             Created {formatDistanceToNow(new Date(order.created_at as string), { addSuffix: true })}
           </p>
         </div>
-        <Badge className={STATUS_COLOR[order.status as string] ?? ''}>{order.status as string}</Badge>
+        <div className="flex items-center gap-2 shrink-0">
+          <Badge className={STATUS_COLOR[order.status as string] ?? ''}>{order.status as string}</Badge>
+          {['completed', 'delivered', 'cancelled', 'rejected'].includes(order.status as string) && (
+            <Button variant="outline" size="sm" className="gap-1.5" asChild>
+              <Link href={`/customer/jobs/new?from=${id}`}>
+                <RotateCcw className="h-3.5 w-3.5" /> Reorder
+              </Link>
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Quote card */}
