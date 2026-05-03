@@ -140,7 +140,7 @@ export default function AdminOrderDetailPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl font-bold">{order.title as string}</h1>
             <Badge className={STATUS_COLOR[order.status as string] ?? ''}>{order.status as string}</Badge>
-            {order.priority && order.priority !== 'normal' && (
+            {(order.priority as string) && (order.priority as string) !== 'normal' && (
               <Badge variant="outline" className={PRIORITY_COLOR[order.priority as string] ?? ''}>{order.priority as string}</Badge>
             )}
           </div>
@@ -155,7 +155,7 @@ export default function AdminOrderDetailPage() {
               <Clock className="h-3.5 w-3.5" />
               {formatDistanceToNow(new Date(order.created_at as string), { addSuffix: true })}
             </span>
-            {order.deadline && <span>Due {new Date(order.deadline as string).toLocaleDateString()}</span>}
+            {Boolean(order.deadline) && <span>Due {new Date(order.deadline as string).toLocaleDateString()}</span>}
           </div>
         </div>
       </div>
@@ -424,7 +424,7 @@ export default function AdminOrderDetailPage() {
             </Card>
           )}
 
-          {order.notes && (
+          {Boolean(order.notes) && (
             <Card>
               <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Notes</CardTitle></CardHeader>
               <CardContent>
