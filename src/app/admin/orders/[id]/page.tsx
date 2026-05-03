@@ -301,10 +301,10 @@ export default function AdminOrderDetailPage() {
                         <Separator className="my-1.5" />
                         <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${Number(q.total).toFixed(2)}</span></div>
                       </div>
-                      {q.valid_until && (
+                      {Boolean(q.valid_until) && (
                         <p className="text-xs text-muted-foreground mt-2">Valid until {new Date(q.valid_until as string).toLocaleDateString()}</p>
                       )}
-                      {q.notes && <p className="text-xs text-muted-foreground mt-1 whitespace-pre-line border-t pt-2">{String(q.notes)}</p>}
+                      {Boolean(q.notes) && <p className="text-xs text-muted-foreground mt-1 whitespace-pre-line border-t pt-2">{String(q.notes)}</p>}
                       {q.status === 'draft' && (
                         <Button size="sm" className="mt-3 w-full gap-1.5" onClick={createInvoice} disabled={saving}>
                           <Send className="h-3.5 w-3.5" /> Create Invoice
