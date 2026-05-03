@@ -185,12 +185,12 @@ export default function AdminOrderDetailPage() {
                             <p className="font-medium text-sm">{item.name as string}</p>
                             <p className="text-xs text-muted-foreground mt-0.5">
                               {item.size as string} · {item.color_type as string}
-                              {item.paper_type ?  ·  : ''}
+                              {item.paper_type ? ` · ${item.paper_type as string}` : ''}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="text-sm font-medium">{item.quantity as number} pcs</p>
-                            <p className="text-xs text-muted-foreground">\</p>
+                            <p className="text-xs text-muted-foreground">${Number(item.line_total).toFixed(2)}</p>
                           </div>
                         </div>
                       ))}
