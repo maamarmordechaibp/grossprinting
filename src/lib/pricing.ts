@@ -76,6 +76,53 @@ export function impositionLabel(
   return `${acrossN} × ${downN} (${totalN}/sheet)`
 }
 
+// Returns full imposition geometry for visual layout preview
+export interface ImpositionLayout {
+  rotated: boolean
+  across: number          // pieces per row
+  down: number            // pieces per column
+  total: number           // total pieces per sheet
+  pieceW: number          // effective piece width on sheet
+  pieceH: number          // effective piece height on sheet
+  sheetW: number
+  sheetH: number
+  marginX: number         // empty space on each side
+  marginY: number
+  wastePct: number        // % of sheet area wasted
+}
+
+export function calcImpositionLayout(
+  sheetW: number,
+  sheetH: number,
+  itemW: number,
+  itemH: number,
+): ImpositionLayout {
+  const acrossN = Math.floor(sheetW / itemW)
+  const downN   = Math.floor(sheetH / itemH)
+  const totalN  = acrossN * downN
+
+  const acrossR = Math.floor(sheetW / itemH)
+  const downR   = Math.floor(sheetH / itemW)
+  const totalR  = acrossR * downR
+
+  const rotated = totalR > totalN
+  const across  = rotated ? acrossR : acrossN
+  const down    = rotated ? downR   : downN
+  const total   = rotated ? totalR  : totalN
+  const pieceW  = rotated ? itemH   : itemW
+  const pieceH  = rotated ? itemW   : itemH
+
+  const usedW   = across * pieceW
+  const usedH   = down   * pieceH
+  const marginX = (sheetW - usedW) / 2
+  const marginY = (sheetH - usedH) / 2
+  const sheetA  = sheetW * sheetH
+  const usedA   = total * pieceW * pieceH
+  const wastePct = sheetA > 0 ? Math.round((1 - usedA / sheetA) * 100) : 0
+
+  return { rotated, across, down, total, pieceW, pieceH, sheetW, sheetH, marginX, marginY, wastePct }
+}
+
 // ─── Quote calculator ────────────────────────────────────────────────────────
 
 export interface CalcParams {

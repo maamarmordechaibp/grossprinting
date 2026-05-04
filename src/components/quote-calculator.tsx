@@ -13,6 +13,7 @@ import {
   calcItemsPerSheet, calcQuote, impositionLabel,
   type PaperStock, type PricingTier, type ProductPreset, type FinishingOption, type CalcResult,
 } from '@/lib/pricing'
+import { ImpositionPreview } from '@/components/imposition-preview'
 
 interface Props {
   /** Called when the user clicks "Use These Prices" — passes subtotal, tax placeholder, and total */
@@ -229,15 +230,20 @@ export function QuoteCalculator({ onApply, orderTotalAmount }: Props) {
 
       {/* Imposition preview */}
       {selectedStock && (selectedPreset || (parseFloat(customW) > 0 && parseFloat(customH) > 0)) && (
-        <div className="rounded-lg bg-muted/50 border px-3 py-2 text-xs text-muted-foreground">
-          <strong className="text-foreground">Layout: </strong>
-          {impositionLabel(
-            selectedStock.width_in, selectedStock.height_in,
-            selectedPreset ? selectedPreset.finished_width_in : parseFloat(customW),
-            selectedPreset ? selectedPreset.finished_height_in : parseFloat(customH),
-          )}
-          {' on '}
-          {selectedStock.width_in}" × {selectedStock.height_in}" sheet
+        <div className="rounded-lg border bg-card px-3 py-3 space-y-2">
+          <ImpositionPreview
+            sheetW={selectedStock.width_in}
+            sheetH={selectedStock.height_in}
+            itemW={selectedPreset ? selectedPreset.finished_width_in : parseFloat(customW)}
+            itemH={selectedPreset ? selectedPreset.finished_height_in : parseFloat(customH)}
+          />
+          <p className="text-[11px] text-muted-foreground text-center">
+            {impositionLabel(
+              selectedStock.width_in, selectedStock.height_in,
+              selectedPreset ? selectedPreset.finished_width_in : parseFloat(customW),
+              selectedPreset ? selectedPreset.finished_height_in : parseFloat(customH),
+            )}
+          </p>
         </div>
       )}
 
