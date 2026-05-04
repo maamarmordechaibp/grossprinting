@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
+import { Download } from 'lucide-react'
 
 type InvoiceRow = { id: string; order_id: string; status: string; total: number; amount_paid: number | null; created_at: string; due_date: string | null; orders: { title: string } | null; customers: { company_name: string | null; full_name: string | null } | null }
 
@@ -37,12 +38,17 @@ export default async function AdminInvoicesPage() {
     <div className="space-y-4 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Invoices</h1>
-        {totalOutstanding > 0 && (
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Total Outstanding</p>
-            <p className="text-lg font-bold text-red-600">${totalOutstanding.toFixed(2)}</p>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <Button asChild variant="outline" size="sm" className="gap-1.5">
+            <a href="/api/invoices/export-qbo"><Download className="h-4 w-4" /> Export to QuickBooks</a>
+          </Button>
+          {totalOutstanding > 0 && (
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Total Outstanding</p>
+              <p className="text-lg font-bold text-red-600">${totalOutstanding.toFixed(2)}</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {!invoices.length ? (

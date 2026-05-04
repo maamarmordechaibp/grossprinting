@@ -56,7 +56,7 @@ export default async function AdminCustomersPage() {
                     <div className="flex items-center gap-3 shrink-0">
                       <Badge variant="outline">{orderCount} order{orderCount !== 1 ? 's' : ''}</Badge>
                       <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/orders?customer=${c.id}`}>Orders</Link>
+                        <Link href={`/admin/customers/${c.id}`}>View</Link>
                       </Button>
                     </div>
                   </div>
