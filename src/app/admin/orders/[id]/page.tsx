@@ -18,6 +18,7 @@ import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
 import { FileText, Image as ImageIcon, Download, Loader2, Save, Send, User, Clock } from 'lucide-react'
 import { QuoteCalculator } from '@/components/quote-calculator'
+import { OrderRushProfit } from '@/components/order-rush-profit'
 
 const STATUS_COLOR: Record<string, string> = {
   quote:     'bg-amber-100 text-amber-800',
@@ -423,6 +424,17 @@ export default function AdminOrderDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          <OrderRushProfit
+            orderId={id}
+            initialIsRush={Boolean(order.is_rush)}
+            initialDeadline={(order.rush_deadline as string | null) ?? null}
+            initialSurcharge={Number(order.rush_surcharge ?? 0)}
+            initialMaterial={Number(order.material_cost ?? 0)}
+            initialLabor={Number(order.labor_cost ?? 0)}
+            initialOverhead={Number(order.overhead_cost ?? 0)}
+            totalAmount={Number(order.total_amount ?? 0)}
+          />
 
           {Boolean(order.notes) && (
             <Card>

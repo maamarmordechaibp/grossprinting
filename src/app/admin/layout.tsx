@@ -4,7 +4,7 @@ import { AppShell } from '@/components/app-shell'
 import { AiAssistant } from '@/components/ai-assistant'
 import {
   LayoutDashboard, Briefcase, Kanban, Users,
-  Package, FileText, Quote, Receipt, DollarSign,
+  Package, FileText, Quote, Receipt, DollarSign, Settings, Truck,
 } from 'lucide-react'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/admin/customers', label: 'Customers',  icon: <Users className="h-4 w-4" /> },
     { href: '/admin/invoices',  label: 'Invoices',   icon: <Receipt className="h-4 w-4" /> },
     { href: '/admin/inventory', label: 'Inventory',  icon: <Package className="h-4 w-4" />,  section: 'Setup' },
+    { href: '/admin/receiving', label: 'Receiving',  icon: <Truck className="h-4 w-4" /> },
     { href: '/admin/pricing',   label: 'Pricing',    icon: <DollarSign className="h-4 w-4" /> },
+    { href: '/admin/settings',  label: 'Settings',   icon: <Settings className="h-4 w-4" /> },
   ]
 
   return (
